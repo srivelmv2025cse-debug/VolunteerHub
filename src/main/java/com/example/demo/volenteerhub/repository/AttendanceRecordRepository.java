@@ -12,4 +12,6 @@ public interface AttendanceRecordRepository extends JpaRepository<AttendanceReco
     Optional<AttendanceRecord> findBySignUp_Id(Long signupId);
 
     List<AttendanceRecord> findBySignUp_Event_Id(Long eventId);
+
+    List<AttendanceRecord> findBySignUp_Volunteer_IdAndAttendedTrue(Long volunteerId);
 }

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.volenteerhub.dto.VolunteerRequest;
+import com.example.demo.volenteerhub.dto.VolunteerHistoryResponse;
+import com.example.demo.volenteerhub.dto.VolunteerHoursResponse;
 import com.example.demo.volenteerhub.dto.VolunteerResponse;
 import com.example.demo.volenteerhub.service.VolunteerService;
 
@@ -44,6 +46,16 @@ public class VolunteerController {
     @GetMapping("/{id}")
     public VolunteerResponse getVolunteerById(@PathVariable Long id) {
         return volunteerService.getVolunteerById(id);
+    }
+
+    @GetMapping("/{id}/hours")
+    public VolunteerHoursResponse getVolunteerHours(@PathVariable Long id) {
+        return volunteerService.getVolunteerHours(id);
+    }
+
+    @GetMapping("/{id}/history")
+    public List<VolunteerHistoryResponse> getVolunteerHistory(@PathVariable Long id) {
+        return volunteerService.getVolunteerHistory(id);
     }
 
     @PutMapping("/{id}")

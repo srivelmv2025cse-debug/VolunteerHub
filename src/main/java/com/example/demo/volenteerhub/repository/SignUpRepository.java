@@ -15,4 +15,6 @@ public interface SignUpRepository extends JpaRepository<SignUp, Long> {
     List<SignUp> findByEvent_Id(Long eventId);
 
     List<SignUp> findByVolunteer_Id(Long volunteerId);
+
+    List<SignUp> findByVolunteer_IdOrderByEvent_DateAsc(Long volunteerId);
 }

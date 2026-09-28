@@ -1,24 +1,39 @@
 package com.example.demo.volenteerhub.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.demo.volenteerhub.dto.VolunteerHistoryResponse;
+import com.example.demo.volenteerhub.dto.VolunteerHoursResponse;
 import com.example.demo.volenteerhub.dto.VolunteerRequest;
 import com.example.demo.volenteerhub.dto.VolunteerResponse;
+import com.example.demo.volenteerhub.entity.AttendanceRecord;
+import com.example.demo.volenteerhub.entity.SignUp;
 import com.example.demo.volenteerhub.entity.Volunteer;
+import com.example.demo.volenteerhub.repository.AttendanceRecordRepository;
+import com.example.demo.volenteerhub.repository.SignUpRepository;
 import com.example.demo.volenteerhub.repository.VolunteerRepository;
 
 @Service
 public class VolunteerService {
 
     private final VolunteerRepository volunteerRepository;
+    private final AttendanceRecordRepository attendanceRecordRepository;
+    private final SignUpRepository signUpRepository;
 
-    public VolunteerService(VolunteerRepository volunteerRepository) {
+    public VolunteerService(
+            VolunteerRepository volunteerRepository,
+            AttendanceRecordRepository attendanceRecordRepository,
+            SignUpRepository signUpRepository) {
         this.volunteerRepository = volunteerRepository;
+        this.attendanceRecordRepository = attendanceRecordRepository;
+        this.signUpRepository = signUpRepository;
     }
 
     public VolunteerResponse createVolunteer(VolunteerRequest request) {
@@ -61,6 +76,27 @@ public class VolunteerService {
         volunteerRepository.delete(findVolunteer(id));
     }
 
+    @Transactional(readOnly = true)
+    public VolunteerHoursResponse getVolunteerHours(Long id) {
+        Volunteer volunteer = findVolunteer(id);
+        BigDecimal totalHours = attendanceRecordRepository
+                .findBySignUp_Volunteer_IdAndAttendedTrue(id).stream()
+                .filter(record -> record.isAttended()
+                        && record.getHoursContributed() != null
+                        && record.getHoursContributed().signum() >= 0)
+                .map(AttendanceRecord::getHoursContributed)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new VolunteerHoursResponse(volunteer.getId(), volunteer.getName(), totalHours);
+    }
+
+    @Transactional(readOnly = true)
+    public List<VolunteerHistoryResponse> getVolunteerHistory(Long id) {
+        findVolunteer(id);
+        return signUpRepository.findByVolunteer_IdOrderByEvent_DateAsc(id).stream()
+                .map(this::toHistoryResponse)
+                .toList();
+    }
+
     private Volunteer findVolunteer(Long id) {
         return volunteerRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Volunteer not found"));
@@ -86,5 +122,19 @@ public class VolunteerService {
                 volunteer.getName(),
                 volunteer.getEmail(),
                 volunteer.getPhone());
+    }
+
+    private VolunteerHistoryResponse toHistoryResponse(SignUp signUp) {
+        AttendanceRecord attendance = signUp.getAttendanceRecord();
+        boolean attended = attendance != null && attendance.isAttended();
+        BigDecimal hours = attended && attendance.getHoursContributed() != null
+                ? attendance.getHoursContributed()
+                : BigDecimal.ZERO;
+        return new VolunteerHistoryResponse(
+                signUp.getEvent().getName(),
+                signUp.getEvent().getDate(),
+                signUp.getEvent().getLocation(),
+                attended,
+                hours);
     }
 }
