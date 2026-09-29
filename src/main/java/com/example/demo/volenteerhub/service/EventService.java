@@ -3,14 +3,13 @@ package com.example.demo.volenteerhub.service;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.volenteerhub.dto.CreateEventRequest;
 import com.example.demo.volenteerhub.dto.EventResponse;
 import com.example.demo.volenteerhub.dto.UpdateEventRequest;
 import com.example.demo.volenteerhub.entity.Event;
+import com.example.demo.volenteerhub.exception.ResourceNotFoundException;
 import com.example.demo.volenteerhub.repository.EventRepository;
 
 @Service
@@ -32,8 +31,11 @@ public class EventService {
         return toResponse(eventRepository.save(event));
     }
 
-    public List<EventResponse> getAllEvents() {
-        return eventRepository.findAll().stream()
+    public List<EventResponse> getAllEvents(String location) {
+        List<Event> events = location == null || location.isBlank()
+                ? eventRepository.findAll()
+                : eventRepository.findByLocationContainingIgnoreCase(location.trim());
+        return events.stream()
                 .map(this::toResponse)
                 .toList();
     }
@@ -65,7 +67,7 @@ public class EventService {
 
     private Event findEvent(Long id) {
         return eventRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found"));
     }
 
     private EventResponse toResponse(Event event) {

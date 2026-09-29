@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.volenteerhub.dto.CreateEventRequest;
@@ -37,8 +38,8 @@ public class EventController {
     }
 
     @GetMapping
-    public List<EventResponse> getAllEvents() {
-        return eventService.getAllEvents();
+    public List<EventResponse> getAllEvents(@RequestParam(required = false) String location) {
+        return eventService.getAllEvents(location);
     }
 
     @GetMapping("/upcoming")

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#17372f">
+    <title>VolunteerHub | Community operations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <a class="brand" href="/" aria-label="VolunteerHub home">
+            <span class="brand-mark">vh</span>
+            <span class="brand-name">volunteer<span>hub</span></span>
+        </a>
+
+        <div class="workspace-label">COMMUNITY OPERATIONS</div>
+        <nav class="primary-nav" aria-label="Main navigation">
+            <button class="nav-item active" data-view-target="overview"><span class="nav-number">01</span>Overview</button>
+            <button class="nav-item" data-view-target="events"><span class="nav-number">02</span>Events</button>
+            <button class="nav-item" data-view-target="volunteers"><span class="nav-number">03</span>Volunteers</button>
+            <button class="nav-item" data-view-target="signups"><span class="nav-number">04</span>Registrations</button>
+            <button class="nav-item" data-view-target="attendance"><span class="nav-number">05</span>Attendance</button>
+            <button class="nav-item" data-view-target="volunteer-portal"><span class="nav-number">06</span>Volunteer portal</button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="connection-state"><span class="connection-dot"></span><span id="connection-label">Connecting to API</span></div>
+            <p>Making good things<br>happen, together.</p>
+            <span class="sidebar-version">VOLUNTEERHUB · 2026</span>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="breadcrumb"><span>VOLUNTEERHUB</span><span class="breadcrumb-slash">/</span><span id="breadcrumb-current">OVERVIEW</span></div>
+            <div class="topbar-actions">
+                <span class="today-label" id="today-label"></span>
+                <button class="refresh-button" id="refresh-button" type="button" title="Refresh dashboard data"><span aria-hidden="true">↻</span> Refresh</button>
+            </div>
+        </header>
+
+        <div class="content-wrap">
+            <div class="notice" id="notice" role="status" aria-live="polite" hidden></div>
+
+            <section class="view active" id="view-overview" aria-labelledby="page-title">
+                <div class="page-intro intro-overview">
+                    <div>
+                        <p class="eyebrow" id="welcome-date">YOUR COMMUNITY, IN MOTION</p>
+                        <h1 id="page-title">A little time.<br><span>A lot of good.</span></h1>
+                        <p class="intro-copy">A clear view of the people, projects, and hours making an impact.</p>
+                    </div>
+                    <button class="primary-button" type="button" data-open-dialog="event-dialog"><span aria-hidden="true">＋</span> Create event</button>
+                </div>
+
+                <div class="stats-grid" id="stats-grid" aria-label="VolunteerHub totals">
+                    <article class="stat-tile stat-green"><span class="stat-label">EVENTS</span><strong id="stat-events">—</strong><span class="stat-foot">On the calendar</span></article>
+                    <article class="stat-tile stat-lime"><span class="stat-label">VOLUNTEERS</span><strong id="stat-volunteers">—</strong><span class="stat-foot">In the community</span></article>
+                    <article class="stat-tile stat-coral"><span class="stat-label">SIGN-UPS</span><strong id="stat-signups">—</strong><span class="stat-foot">People showing up</span></article>
+                    <article class="stat-tile stat-blue"><span class="stat-label">ATTENDANCE</span><strong id="stat-attendance">—</strong><span class="stat-foot">Records completed</span></article>
+                    <article class="stat-tile stat-gold"><span class="stat-label">HOURS GIVEN</span><strong id="stat-hours">—</strong><span class="stat-foot">Time that adds up</span></article>
+                </div>
+
+                <div class="overview-grid">
+                    <section class="section-block upcoming-block">
+                        <div class="section-heading">
+                            <div><p class="eyebrow">WHAT'S NEXT</p><h2>Upcoming events</h2></div>
+                            <button class="text-button" type="button" data-view-target="events">All events <span aria-hidden="true">↗</span></button>
+                        </div>
+                        <div id="overview-events" class="event-list"><div class="loading-line">Loading events…</div></div>
+                    </section>
+                    <aside class="impact-panel">
+                        <div class="impact-topline"><span class="impact-icon" aria-hidden="true">✳</span><span>THE IMPACT SO FAR</span></div>
+                        <p class="impact-number"><span id="impact-hours">—</span><small>hrs</small></p>
+                        <p class="impact-copy">Every hour is someone choosing to make their neighborhood a little better.</p>
+                        <div class="impact-rule"><span></span></div>
+                        <p class="impact-caption"><strong id="impact-volunteers">—</strong> volunteers contributing their time</p>
+                    </aside>
+                </div>
+
+                <section class="section-block volunteer-preview">
+                    <div class="section-heading">
+                        <div><p class="eyebrow">THE PEOPLE BEHIND IT</p><h2>Volunteer community</h2></div>
+                        <button class="text-button" type="button" data-view-target="volunteers">Meet everyone <span aria-hidden="true">↗</span></button>
+                    </div>
+                    <div class="volunteer-strip" id="overview-volunteers"><div class="loading-line">Loading volunteers…</div></div>
+                </section>
+            </section>
+
+            <section class="view" id="view-events" aria-labelledby="events-title" hidden>
+                <div class="page-intro compact-intro">
+                    <div><p class="eyebrow">PLAN SOMETHING GOOD</p><h1 id="events-title">Events</h1><p class="intro-copy">Find a place to pitch in or bring a new idea to life.</p></div>
+                    <button class="primary-button" type="button" data-open-dialog="event-dialog"><span aria-hidden="true">＋</span> Create event</button>
+                </div>
+                <section class="section-block full-section">
+                    <div class="section-heading section-heading-wrap">
+                        <div><p class="eyebrow">EVENT DIRECTORY</p><h2>Community calendar</h2></div>
+                        <form id="event-search-form" class="search-form">
+                            <label class="sr-only" for="event-location-search">Filter events by location</label>
+                            <input id="event-location-search" name="location" type="search" placeholder="Filter by location">
+                            <button class="outline-button" type="submit">Search</button>
+                            <button class="quiet-button" id="clear-search" type="button">Clear</button>
+                        </form>
+                    </div>
+                    <div class="table-scroll"><table><thead><tr><th>EVENT</th><th>DATE</th><th>LOCATION</th><th>CAPACITY</th><th></th></tr></thead><tbody id="events-table-body"></tbody></table></div>
+                    <p class="empty-state" id="events-empty" hidden>No events match this location yet.</p>
+                </section>
+            </section>
+
+            <section class="view" id="view-volunteer-portal" aria-labelledby="volunteer-portal-title" hidden>
+                <div class="volunteer-main">
+                    <section class="volunteer-hero">
+                        <p class="eyebrow">SHOW UP FOR YOUR COMMUNITY</p>
+                        <h1 id="volunteer-portal-title">Good things happen<br><span>when we pitch in.</span></h1>
+                        <p class="intro-copy">Explore upcoming community events and find a way to help that feels right for you.</p>
+                    </section>
+                    <section class="volunteer-events-section">
+                        <div class="section-heading"><div><p class="eyebrow">MAKE A DIFFERENCE</p><h2>Upcoming events</h2></div><span id="volunteer-event-count" class="result-count"></span></div>
+                        <div id="volunteer-events" class="volunteer-events-grid"><p class="loading-line">Loading upcoming events...</p></div>
+                    </section>
+                </div>
+            </section>
+            <section class="view" id="view-volunteers" aria-labelledby="volunteers-title" hidden>
+                <div class="page-intro compact-intro">
+                    <div><p class="eyebrow">PEOPLE POWERING CHANGE</p><h1 id="volunteers-title">Volunteers</h1><p class="intro-copy">A community of people who make showing up count.</p></div>
+                    <button class="primary-button" type="button" data-open-dialog="volunteer-dialog"><span aria-hidden="true">＋</span> Add volunteer</button>
+                </div>
+                <section class="section-block full-section">
+                    <div class="section-heading"><div><p class="eyebrow">YOUR COMMUNITY</p><h2>Volunteer directory</h2></div><span class="result-count" id="volunteer-count">— people</span></div>
+                    <div class="table-scroll"><table><thead><tr><th>VOLUNTEER</th><th>EMAIL</th><th>PHONE</th><th>IMPACT</th><th></th></tr></thead><tbody id="volunteers-table-body"></tbody></table></div>
+                    <p class="empty-state" id="volunteers-empty" hidden>No volunteers yet. Add the first one to get started.</p>
+                </section>
+            </section>
+
+            <section class="view" id="view-signups" aria-labelledby="signups-title" hidden>
+                <div class="page-intro compact-intro"><div><p class="eyebrow">CONNECT PEOPLE TO PURPOSE</p><h1 id="signups-title">Registrations</h1><p class="intro-copy">Match volunteers with events that need them.</p></div></div>
+                <div class="workflow-grid">
+                    <section class="form-panel">
+                        <p class="eyebrow">NEW REGISTRATION</p><h2>Save a spot</h2>
+                        <form id="signup-form" class="stacked-form">
+                            <label for="signup-event">Event</label><select id="signup-event" required><option value="">Choose an event</option></select>
+                            <label for="signup-volunteer">Existing volunteer <span class="optional-label">OPTIONAL</span></label><select id="signup-volunteer"><option value="">Add a new volunteer below</option></select>
+                            <p class="signup-help">Choose an existing volunteer, or enter details to add someone new.</p>
+                            <label for="signup-name">Volunteer name</label><input id="signup-name" autocomplete="name" placeholder="Avery Smith">
+                            <label for="signup-email">Email</label><input id="signup-email" type="email" autocomplete="email" placeholder="avery@example.com">
+                            <label for="signup-phone">Phone <span class="optional-label">OPTIONAL</span></label><input id="signup-phone" type="tel" autocomplete="tel" placeholder="+1 555-010-1000">
+                            <button class="primary-button" type="submit">Register volunteer <span aria-hidden="true">→</span></button>
+                        </form>
+                    </section>
+                    <section class="section-block registration-panel">
+                        <div class="section-heading"><div><p class="eyebrow">EVENT ROSTER</p><h2>Registrations</h2></div></div>
+                        <label class="sr-only" for="roster-event">Choose event roster</label><select id="roster-event" class="inline-select"><option value="">Choose event to view roster</option></select>
+                        <div id="signup-list" class="roster-list"><p class="empty-note">Choose an event to view its signups.</p></div>
+                    </section>
+                </div>
+            </section>
+
+            <section class="view" id="view-attendance" aria-labelledby="attendance-title" hidden>
+                <div class="page-intro compact-intro"><div><p class="eyebrow">RECOGNIZE THE HOURS</p><h1 id="attendance-title">Attendance</h1><p class="intro-copy">Record who was there and celebrate the time they gave.</p></div></div>
+                <div class="workflow-grid">
+                    <section class="form-panel">
+                        <p class="eyebrow">RECORD OR UPDATE</p><h2>Log attendance</h2>
+                        <form id="attendance-form" class="stacked-form">
+                            <label for="attendance-signup">Signup</label><select id="attendance-signup" required><option value="">Choose a signup</option></select>
+                            <label class="checkbox-line"><input id="attendance-present" type="checkbox" checked> Volunteer was present</label>
+                            <label for="attendance-hours">Hours contributed</label><input id="attendance-hours" type="number" min="0" step="0.25" value="0" required>
+                            <button class="primary-button" type="submit">Save attendance <span aria-hidden="true">→</span></button>
+                        </form>
+                    </section>
+                    <section class="section-block registration-panel">
+                        <div class="section-heading"><div><p class="eyebrow">EVENT RECORDS</p><h2>Attendance log</h2></div></div>
+                        <label class="sr-only" for="attendance-event">Choose event attendance</label><select id="attendance-event" class="inline-select"><option value="">Choose event to view attendance</option></select>
+                        <div id="attendance-list" class="roster-list"><p class="empty-note">Choose an event to view attendance.</p></div>
+                    </section>
+                </div>
+            </section>
+
+            <footer class="page-footer"><span>VOLUNTEERHUB</span><span>Small acts. Shared impact.</span></footer>
+        </div>
+    </main>
+</div>
+
+<dialog class="app-dialog" id="public-signup-dialog">
+    <form id="public-signup-form" class="dialog-form">
+        <div class="dialog-heading"><div><p class="eyebrow">JOIN THE TEAM</p><h2 id="public-signup-title">Register for an event</h2></div><button class="dialog-close" type="button" data-close-dialog aria-label="Close">�</button></div>
+        <p class="intro-copy">Enter your details and we�ll save your volunteer profile and event registration.</p>
+        <input id="public-signup-event-id" name="eventId" type="hidden" required>
+        <label for="public-signup-name">Full name</label><input id="public-signup-name" name="name" required maxlength="120" autocomplete="name" placeholder="Avery Smith">
+        <label for="public-signup-email">Email</label><input id="public-signup-email" name="email" type="email" required maxlength="254" autocomplete="email" placeholder="avery@example.com">
+        <label for="public-signup-phone">Phone <span class="optional-label">OPTIONAL</span></label><input id="public-signup-phone" name="phone" type="tel" autocomplete="tel" placeholder="+1 555-010-1000">
+        <div class="dialog-actions"><button class="quiet-button" type="button" data-close-dialog>Cancel</button><button class="primary-button" id="public-signup-submit" type="submit">Complete registration</button></div>
+    </form>
+</dialog>
+<dialog class="app-dialog" id="event-dialog">
+    <form id="event-form" class="dialog-form">
+        <div class="dialog-heading"><div><p class="eyebrow">MAKE IT HAPPEN</p><h2>New event</h2></div><button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button></div>
+        <label for="event-name">Event name</label><input id="event-name" name="name" required maxlength="120" placeholder="Neighborhood garden day">
+        <label for="event-description">Description</label><textarea id="event-description" name="description" rows="3" maxlength="2000" placeholder="What will volunteers do?"></textarea>
+        <div class="form-row"><div><label for="event-date">Date</label><input id="event-date" name="date" type="date" required></div><div><label for="event-capacity">Volunteer capacity</label><input id="event-capacity" name="volunteerCapacity" type="number" min="1" required value="20"></div></div>
+        <label for="event-location">Location</label><input id="event-location" name="location" required placeholder="Community Park">
+        <div class="dialog-actions"><button class="quiet-button" type="button" data-close-dialog>Cancel</button><button class="primary-button" type="submit">Create event</button></div>
+    </form>
+</dialog>
+
+<dialog class="app-dialog" id="volunteer-dialog">
+    <form id="volunteer-form" class="dialog-form">
+        <div class="dialog-heading"><div><p class="eyebrow">GROW THE COMMUNITY</p><h2>Add volunteer</h2></div><button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button></div>
+        <label for="volunteer-name">Full name</label><input id="volunteer-name" name="name" required placeholder="Avery Smith">
+        <label for="volunteer-email">Email</label><input id="volunteer-email" name="email" type="email" required placeholder="avery@example.com">
+        <label for="volunteer-phone">Phone <span class="optional-label">OPTIONAL</span></label><input id="volunteer-phone" name="phone" type="tel" placeholder="+1 555-010-1000">
+        <div class="dialog-actions"><button class="quiet-button" type="button" data-close-dialog>Cancel</button><button class="primary-button" type="submit">Add volunteer</button></div>
+    </form>
+</dialog>
+
+<dialog class="app-dialog history-dialog" id="history-dialog">
+    <div class="dialog-form"><div class="dialog-heading"><div><p class="eyebrow">VOLUNTEER IMPACT</p><h2 id="history-title">Participation history</h2></div><button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button></div><div id="history-content"></div></div>
+</dialog>
+</body>
+</html>

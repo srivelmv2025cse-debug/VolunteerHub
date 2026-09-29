@@ -4,10 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.example.demo.volenteerhub.dto.VolunteerHistoryResponse;
 import com.example.demo.volenteerhub.dto.VolunteerHoursResponse;
@@ -16,6 +14,8 @@ import com.example.demo.volenteerhub.dto.VolunteerResponse;
 import com.example.demo.volenteerhub.entity.AttendanceRecord;
 import com.example.demo.volenteerhub.entity.SignUp;
 import com.example.demo.volenteerhub.entity.Volunteer;
+import com.example.demo.volenteerhub.exception.DuplicateVolunteerException;
+import com.example.demo.volenteerhub.exception.ResourceNotFoundException;
 import com.example.demo.volenteerhub.repository.AttendanceRecordRepository;
 import com.example.demo.volenteerhub.repository.SignUpRepository;
 import com.example.demo.volenteerhub.repository.VolunteerRepository;
@@ -39,7 +39,7 @@ public class VolunteerService {
     public VolunteerResponse createVolunteer(VolunteerRequest request) {
         String email = normalizeEmail(request.email());
         if (volunteerRepository.existsByEmailIgnoreCase(email)) {
-            throw duplicateEmailException();
+            throw new DuplicateVolunteerException();
         }
 
         Volunteer volunteer = new Volunteer();
@@ -63,7 +63,7 @@ public class VolunteerService {
         Volunteer volunteer = findVolunteer(id);
         String email = normalizeEmail(request.email());
         if (volunteerRepository.existsByEmailIgnoreCaseAndIdNot(email, id)) {
-            throw duplicateEmailException();
+            throw new DuplicateVolunteerException();
         }
 
         volunteer.setName(request.name().trim());
@@ -99,13 +99,7 @@ public class VolunteerService {
 
     private Volunteer findVolunteer(Long id) {
         return volunteerRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Volunteer not found"));
-    }
-
-    private ResponseStatusException duplicateEmailException() {
-        return new ResponseStatusException(
-                HttpStatus.CONFLICT,
-                "Volunteer with this email already exists.");
+                .orElseThrow(() -> new ResourceNotFoundException("Volunteer not found"));
     }
 
     private String normalizeEmail(String email) {

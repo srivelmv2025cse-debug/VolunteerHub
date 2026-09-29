@@ -11,5 +11,5 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByDateGreaterThanEqualOrderByDateAsc(LocalDate date);
 
-    List<Event> findByDate(LocalDate date);
+    List<Event> findByLocationContainingIgnoreCase(String location);
 }

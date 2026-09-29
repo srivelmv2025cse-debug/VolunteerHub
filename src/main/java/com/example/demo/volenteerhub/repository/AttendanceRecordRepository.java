@@ -1,9 +1,11 @@
 package com.example.demo.volenteerhub.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.example.demo.volenteerhub.entity.AttendanceRecord;
 
@@ -14,4 +16,8 @@ public interface AttendanceRecordRepository extends JpaRepository<AttendanceReco
     List<AttendanceRecord> findBySignUp_Event_Id(Long eventId);
 
     List<AttendanceRecord> findBySignUp_Volunteer_IdAndAttendedTrue(Long volunteerId);
+
+    @Query("select coalesce(sum(record.hoursContributed), 0) from AttendanceRecord record "
+            + "where record.attended = true and record.hoursContributed >= 0")
+    BigDecimal sumHoursForAttendedVolunteers();
 }
